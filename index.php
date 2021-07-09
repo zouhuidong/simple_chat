@@ -55,12 +55,42 @@
 		return $location;	
 	}
 	
+	// 清除HTML字符串内的html,js,css格式，返回清除格式后的HTML字符串内容
+	// $str 原字符串
+	function DeleteHtml($str)
+	{
+		$str = trim($str); //清除字符串两边的空格
+		$str = strip_tags($str,""); //利用php自带的函数清除html格式
+		$str = preg_replace("/\t/","",$str); //使用正则表达式替换内容，如：空格，换行，并将替换为空。
+		$str = preg_replace("/\r\n/","",$str);
+		$str = preg_replace("/\r/","",$str);
+		$str = preg_replace("/\n/","",$str);
+		$str = preg_replace("/ /","",$str);
+		$str = preg_replace("/ /","",$str); //匹配html中的空格
+		return trim($str); //返回字符串
+	}
+	
 	$user = $_POST["user"];
 	$submit = $_POST["submit"];
 	$text = $_POST["text"];
 	
+	// 密钥，在文本内容的开头输入密钥后，密钥后的文本可以使用html标签
+	$cmd = "cmd";
+	
 	if($submit == "submit")
 	{
+		// 若密钥错误
+		if(substr($text,0,strlen($cmd)) != $cmd)
+		{
+			$user = DeleteHtml($user);
+			$text = DeleteHtml($text);
+		}
+		else
+		{
+			// 删除开头的密钥文字
+			$text = substr($text,strlen($cmd),strlen($text));
+		}
+		
 		$result = mysqli_query($g_dbConnect, "INSERT INTO `message` (time,name,text,ip,location) VALUES ('".date("Y-m-d G:i:s")."','".$user."','".$text."','".GetClientIP()."','".GetIpAddress(GetClientIP())."');");
 		if(!$result)
 		{
