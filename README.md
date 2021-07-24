@@ -1,7 +1,7 @@
 # simple_chat
 A simple chat web made by php.
 
-一个简易的聊天网站，由php制作。xampp下运行正常。
+一个简易的聊天网站，由php制作，目前使用utf-8字符集。xampp下运行正常。
 
 ## 使用方法：
 
@@ -16,6 +16,8 @@ A simple chat web made by php.
 
 **Ver 0.2(beta)**
 
+数据库使用了 utf-8 字符集，所以可能不和 Ver0.1 的数据库兼容了。
+
 更新界面，更好看一点。
 
 新增对手机端显示的支持。
@@ -27,6 +29,8 @@ A simple chat web made by php.
 取消了之前一直刷新消息区来获取消息的设计，采取了响应式更新消息的设计，使用体验更好了。
 
 删除了输入 html 语句的密钥功能，可以在index.php设置是否允许用户输入html语句（script语句始终会被过滤）
+
+---
 
 **Ver 0.1**
 
