@@ -3,14 +3,34 @@ A simple chat web made by php.
 
 一个简易的聊天网站，由php制作。xampp下运行正常。
 
-使用方法：
+## 使用方法：
 
-1.在database.php中设置数据库信息
+1. 在database.php中设置数据库信息
 
-2.运行install.php，安装数据库。
+2. 运行install.php，在界面中操作以配置数据库。
 
-3.运行database.php即可。
+3. 运行index.php即可。
 
+
+## 更新日志
+
+**Ver 0.2(beta)**
+
+更新界面，更好看一点。
+
+新增对手机端显示的支持。
+
+新增文件上传功能（可选开启，见index.php）
+
+新增新消息提醒功能。
+
+取消了之前一直刷新消息区来获取消息的设计，采取了响应式更新消息的设计，使用体验更好了。
+
+删除了输入 html 语句的密钥功能，可以在index.php设置是否允许用户输入html语句（script语句始终会被过滤）
+
+**Ver 0.1**
+
+最初版本。
 
 index.php中设置$cmd变量可以设置密钥。
 
