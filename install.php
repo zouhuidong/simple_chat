@@ -5,46 +5,56 @@
 ?>
 
 <html>
-<title>°²×°ºÍĞ¶ÔØÊı¾İ¿â</title>
-<h1 align="center"><font color="blue">°²×°ºÍĞ¶ÔØÊı¾İ¿â</font></h1>
-<hr>
-<table>
-	<tr>
-		<td><a href="?step=2" target="_self">°²×°Êı¾İ¿â</a></td>
-	</tr>
-	<tr>
-		<td><a href="?step=3" target="_self">É¾³ıÊı¾İ¿â</a></td>
-	</tr>
+	<head>
+		<meta charset="utf-8">
+		<title>å®‰è£…å’Œå¸è½½æ•°æ®åº“</title>
+	</head>
 	
-</table>
-<hr>
-Copyright (C) <?php echo "2018-".date("Y"); ?> huidong
+	<body>
+	
+		<h1 align="center"><font color="blue">å®‰è£…å’Œå¸è½½æ•°æ®åº“</font></h1>
+		<hr>
+		<table>
+			<tr>
+				<td><a href="?step=2" target="_self">å®‰è£…æ•°æ®åº“</a></td>
+			</tr>
+			<tr>
+				<td><a href="?step=3" target="_self">åˆ é™¤æ•°æ®åº“</a></td>
+			</tr>
+			
+		</table>
+		<hr>
+		
+		page created by huidong
+		<br/>
+		
+	</body>
 </html>
 
 <?php
 
 
 	/*
-	 *	Êı¾İ¿â²Ù×÷
+	 *	æ•°æ®åº“æ“ä½œ
 	 */
 	 
-	// ´´½¨±í
+	// åˆ›å»ºè¡¨
 	function CreateTables()
 	{
-		// µÃµ½È«¾Ö±äÁ¿
+		// å¾—åˆ°å…¨å±€å˜é‡
 		$g_dbConnect = $GLOBALS['g_dbConnect'];
 		
-		echo "<br/>¿ªÊ¼´´½¨±í<br/>";
+		echo "<br/>å¼€å§‹åˆ›å»ºè¡¨<br/>";
 		
 		$sql = "CREATE TABLE `message` (
 			`id` int(4) unsigned NOT NULL auto_increment,
-			`time` datetime NOT NULL default '0000-00-00 00:00:00',
-			`name` text NOT NULL default '',
-			`text` text NOT NULL default '',
-			`ip` text NOT NULL default '',
-			`location` text NOT NULL default '',
+			`time` datetime,
+			`name` text,
+			`text` text,
+			`ip` text,
+			`location` text,
 			PRIMARY KEY (`id`)
-		) TYPE=MyISAM;";
+		)";
 		if(mysqli_query($g_dbConnect,$sql))
 		{
 			echo "<br/>Create table Successfully";
@@ -55,21 +65,20 @@ Copyright (C) <?php echo "2018-".date("Y"); ?> huidong
 		}
 	}
 	
-	// ´´½¨Êı¾İ¿â£¬ÈôÒÑ´æÔÚÔò´´½¨
+	// åˆ›å»ºæ•°æ®åº“ï¼Œè‹¥å·²å­˜åœ¨åˆ™åˆ›å»º
 	function CreateDatabase()
 	{
-		// µÃµ½È«¾Ö±äÁ¿
+		// å¾—åˆ°å…¨å±€å˜é‡
 		$g_dbConnect = $GLOBALS['g_dbConnect'];
 		$g_dbDatabase = $GLOBALS['g_dbDatabase'];
-		$g_dbCharset = $GLOBALS['g_dbCharset'];
 		
-		//Á¬½ÓÊı¾İ¿â
+		//è¿æ¥æ•°æ®åº“
 		if (!mysqli_select_db($g_dbConnect,$g_dbDatabase))
 		{
-			//Á¬½ÓÊı¾İ¿âÊ§°Ü
+			//è¿æ¥æ•°æ®åº“å¤±è´¥
 			echo '<br>could not select database '.$g_dbDatabase;
 			echo '<br>create database '.$g_dbDatabase;
-			$sql = 'CREATE DATABASE IF NOT EXISTS '.$g_dbDatabase." DEFAULT CHARACTER SET ".$g_dbCharset." COLLATE gbk_chinese_ci";
+			$sql = 'CREATE DATABASE IF NOT EXISTS '.$g_dbDatabase.' DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;';
 			if (mysqli_query($g_dbConnect,$sql))
 			{
 				echo "<br>Database ".$g_dbDatabase." created successfully";
@@ -79,53 +88,35 @@ Copyright (C) <?php echo "2018-".date("Y"); ?> huidong
 				echo '<br>Error creating database: ' . mysqli_error($g_dbConnect);
 			}
 
-			if(mysqli_select_db($g_dbConnect,$g_dbDatabase))
-			{
-				//set charset
-				$sql = "SET NAMES ".$g_dbCharset;
-				if(mysqli_query($g_dbConnect,$sql))
-				{
-					echo "<br>Set charset to ".$g_dbCharset ."successfully";
-				}
-				else
-				{
-					echo "<br>Error set charset: ".mysqli_error($g_dbConnect);
-				}
-			}
-			else
-			{
-				echo "<br/>Á¬½ÓÊı¾İ¿â³É¹¦¡£<br/>";
-			}
+			mysqli_select_db($g_dbConnect,$g_dbDatabase);
 		}
-		else
-		{
-			echo "<br/>Á¬½ÓÊı¾İ¿â³É¹¦¡£<br/>";
-		}
+		
+		echo "<br/>è¿æ¥æ•°æ®åº“æˆåŠŸã€‚<br/>";
 	}
 
 	
 	/*
-	 *	ÓÃ»§²Ù×÷
+	 *	ç”¨æˆ·æ“ä½œ
 	 */
 	
-	// ¼ì²âÁ¬½Ó
+	// æ£€æµ‹è¿æ¥
 	if (!$g_dbConnect) {
 		die("Connection failed: " . mysqli_connect_error());
 	}
-	echo "Á¬½Ó·şÎñÆ÷³É¹¦";
+	echo "è¿æ¥æœåŠ¡å™¨æˆåŠŸ";
 
-	// Ä£Ê½Îª°²×°
+	// æ¨¡å¼ä¸ºå®‰è£…
 	if($_GET['step'] == 2)
 	{
-		// Á¬½Ó»ò´´½¨Êı¾İ¿â
+		// è¿æ¥æˆ–åˆ›å»ºæ•°æ®åº“
 		CreateDatabase();
 
-		// ´´½¨±í
+		// åˆ›å»ºè¡¨
 		CreateTables();
 
 	}
 	
-	// Ä£Ê½ÎªĞ¶ÔØ
+	// æ¨¡å¼ä¸ºå¸è½½
 	else if($_GET['step'] == 3)
 	{
 		//delete DB

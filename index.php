@@ -1,144 +1,151 @@
 <?php
-	include_once("database.php");
+
+	/*
+	 *	index.php
+	 *	simple_chat èŠå¤©ç³»ç»Ÿä¸»é¡µé¢
+	 *
+	 *	åˆ¶ä½œè€…ï¼šhuidong<mailkey@yeah.net>
+	 *	åˆ›å»ºæ—¶é—´ï¼š2021.7.19
+	 *	æœ€åä¿®æ”¹ï¼š2021.7.23
+	 *
+	 */
+
+	session_start();
+
+	// simple_chat ç‰ˆæœ¬ä¿¡æ¯
+	$g_version = "Ver 0.2(beta)";
+	$g_release_time = "2021.7.23";
 	
-	// µÃµ½¿Í»§¶ËIPµØÖ·
-	function GetClientIP()
-	{
-		$ip = null;
-		
-		if ($_SERVER["HTTP_CLIENT_IP"] && strcasecmp($_SERVER["HTTP_CLIENT_IP"], "unknown"))
-		{
-			$ip = $_SERVER["HTTP_CLIENT_IP"];
-		}
-		else
-		{
-			if ($_SERVER["HTTP_X_FORWARDED_FOR"] && strcasecmp($_SERVER["HTTP_X_FORWARDED_FOR"], "unknown"))
-			{
-				$ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
-			}
-			else
-			{
-				if ($_SERVER["REMOTE_ADDR"] && strcasecmp($_SERVER["REMOTE_ADDR"], "unknown"))
-				{
-					$ip = $_SERVER["REMOTE_ADDR"];
-				}
-				else
-				{
-					if (isset ($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR'] && strcasecmp($_SERVER['REMOTE_ADDR'], "unknown"))
-					{
-						$ip = $_SERVER['REMOTE_ADDR'];
-					}
-					else
-					{
-						$ip = "unknown";
-					}
-				}
-			}
-		}
-		
-		return $ip;
-	}
+	// è§„å®šæ˜¯å¦å…è®¸è¾“å…¥ html æ ‡ç­¾ï¼ˆscriptæ ‡ç­¾é™¤å¤–ï¼‰
+	$_SESSION['isAllowHTML'] = false;
 	
-	// µÃµ½Ä³IPµÄ¹éÊôµØ£¬·µ»Ø¹éÊôµØ×Ö·û´®
-	function GetIpAddress($ip)
-	{
-		//µÃµ½IP¹éÊôµØ
-		$location = file_get_contents("https://whois.pconline.com.cn/jsLabel.jsp?ip=".$ip);
-		
-		//×ª»»×Ö·û¼¯£¬UTF-8 -> GBK
-		//$location = mb_convert_encoding($location, 'utf-8','GB2312');
-		
-		//É¾È¥ÎŞÓÃĞÅÏ¢£¬Ö»±£Áô¹éÊôµØĞÅÏ¢
-		$location = substr($location,strrpos($location,"='")+2);
-		$location = substr($location,0,strpos($location,"'"));
-		
-		return $location;	
-	}
+	// è§„å®šæ˜¯å¦å…è®¸æ–‡ä»¶ä¸Šä¼ 
+	$g_allow_file_upload = true;
 	
-	// Çå³ıHTML×Ö·û´®ÄÚµÄhtml,js,css¸ñÊ½£¬·µ»ØÇå³ı¸ñÊ½ºóµÄHTML×Ö·û´®ÄÚÈİ
-	// $str Ô­×Ö·û´®
-	function DeleteHtml($str)
-	{
-		$str = trim($str); //Çå³ı×Ö·û´®Á½±ßµÄ¿Õ¸ñ
-		$str = strip_tags($str,""); //ÀûÓÃphp×Ô´øµÄº¯ÊıÇå³ıhtml¸ñÊ½
-		$str = preg_replace("/\t/","",$str); //Ê¹ÓÃÕıÔò±í´ïÊ½Ìæ»»ÄÚÈİ£¬Èç£º¿Õ¸ñ£¬»»ĞĞ£¬²¢½«Ìæ»»Îª¿Õ¡£
-		$str = preg_replace("/\r\n/","",$str);
-		$str = preg_replace("/\r/","",$str);
-		$str = preg_replace("/\n/","",$str);
-		$str = preg_replace("/ /","",$str);
-		$str = preg_replace("/ /","",$str); //Æ¥ÅähtmlÖĞµÄ¿Õ¸ñ
-		return trim($str); //·µ»Ø×Ö·û´®
-	}
-	
-	$user = $_POST["user"];
-	$submit = $_POST["submit"];
-	$text = $_POST["text"];
-	
-	// ÃÜÔ¿£¬ÔÚÎÄ±¾ÄÚÈİµÄ¿ªÍ·ÊäÈëÃÜÔ¿ºó£¬ÃÜÔ¿ºóµÄÎÄ±¾¿ÉÒÔÊ¹ÓÃhtml±êÇ©
-	$cmd = "cmd";
-	
-	if($submit == "submit")
-	{
-		// ÈôÃÜÔ¿´íÎó
-		if(substr($text,0,strlen($cmd)) != $cmd)
-		{
-			$user = DeleteHtml($user);
-			$text = DeleteHtml($text);
-		}
-		else
-		{
-			// É¾³ı¿ªÍ·µÄÃÜÔ¿ÎÄ×Ö
-			$text = substr($text,strlen($cmd),strlen($text));
-		}
-		
-		$result = mysqli_query($g_dbConnect, "INSERT INTO `message` (time,name,text,ip,location) VALUES ('".date("Y-m-d G:i:s")."','".$user."','".$text."','".GetClientIP()."','".GetIpAddress(GetClientIP())."');");
-		if(!$result)
-		{
-			echo "<br/>ERROR: cannot insert message:".mysqli_error($g_dbConnect);
-		}
-	}
+	// æ–‡ä»¶ä¸Šä¼ é…ç½®å‚æ•°
+	$_SESSION['control_upload_file_exts'] = array("*");
+	$_SESSION['control_upload_file_max_size'] = 512;
+	$_SESSION['control_upload_file_size_unit'] = "MB";
+	$_SESSION['control_upload_file_save_path'] = "./upload/";
+	$_SESSION['control_upload_file_allow_repeat'] = true;
 	
 ?>
 
 <html>
 
 	<head>
+		<meta charset="utf-8">
 		<title>Simple Chat</title>
-	</head>
-	<body>
 		
-		<iframe
-			id="message"
-			src="./chat.php"
-			width=100%
-			height=50%
-		>ÄãµÄä¯ÀÀÆ÷²»Ö§³Öiframe</iframe>
+		<style>
 		
-		<hr/>
-		<button onclick="int=window.clearInterval(int)">Í£Ö¹½ÓÊÜÏûÏ¢</button>
-		<button onclick="if(!int)int=set()">¼ÌĞø½ÓÊÕÏûÏ¢</button>
-		<br/>
-		<br/>
-		
-		<b>Simple Chat ÁÄÌìÊÒ</b>
-		<p>ÎŞĞè×¢²á£¬Ö±½Ó³©ÁÄ</p>
-		
-		<form method="post">
-			ÁÙÊ±êÇ³Æ
-			<input name="user" maxlength="30" size="30" value=<?php echo "'".$user."'"; ?>/>
-			<br/><br/>
-			<textarea name="text" rows="3" cols="70"></textarea>
-			<button name="submit" value="submit">·¢ËÍ</button>
-		</form>
-		
-		<!-- ¶¨Ê±Æ÷£º²»¶ÏË¢ĞÂÏûÏ¢ -->
-		<script>
-			var int = set();
+			/* æ‰‹æœº */
+			[class*="message"] {
+				width: 100%;
+			}
 			
+			/* ç”µè„‘ */
+			@media only screen and (min-width: 1300px) {
+				.message {
+					float:right;
+					width: 50%;
+				}
+			}
+			
+			.box {
+				height:70%;
+				overflow: hidden;
+			}
+			
+		</style>
+		
+	</head>
+	<body style="
+		padding-left: 30px;
+		padding-right: 30px;
+	">
+		
+		<!-- å·¦åŠè¾¹ -->
+		<div style="float:left;">
+
+			<h1 style='font-family: "Times New Roman", Times, serif;font-size:40px'>Simple Chat èŠå¤©å®¤</h1>
+			<font size=2>
+				<font color=blue>
+					<?php echo $g_version ?>
+				</font>
+				<font color=grey>
+				made by huidong&lt;mailkey@yeah.net&gt; <?php echo $g_release_time ?>
+				</font>
+			</font>
+			<p>æ— éœ€æ³¨å†Œï¼Œç›´æ¥ç•…èŠ</p>
+			<br/>
+			
+			<form method="post" target="sendmessage" id="form" action="./sendmessage.php">
+				<b>
+					ä¸´æ—¶æ˜µç§°&nbsp;
+					<input id="user" name="user" maxlength="30" size="30" required></input>
+				</b><br/><br/>
+				<textarea id="text" name="text" rows="6" cols="70"></textarea>
+				<br/><br/>
+				<div style="float:right">
+					<button name="button" value="submit" style="
+						width:100px;
+						height:50px;
+						background-color:blue;
+						color:white;
+						border:none;
+					">å‘é€</button>
+				</div>
+			</form>
+			
+			<!-- æ–‡ä»¶ä¸Šä¼  -->
+			<?php
+				if($g_allow_file_upload)
+				{
+					echo "
+						<b> æ–‡ä»¶ä¸Šä¼ ã€æäº¤æ–‡ä»¶åéœ€è¦ç‚¹å‡»å‘é€ã€‘ </b><br/>
+						<iframe width=400px height=100px src='./control_upload_file.php'></iframe>
+					";
+				}
+			?>
+			
+			
+			<!-- æ— åˆ·æäº¤è¡¨å• -->
+			<iframe name="sendmessage" style="display:none;" ></iframe>
+			
+		</div>
+		<br/>
+		
+		<!-- å³åŠè¾¹ï¼šèŠå¤©æ¶ˆæ¯çª—å£ -->
+		<div id="messagebox" class="message box">
+			<iframe
+				id="message_iframe"
+				src="./chat.php"
+				width=100%
+				height=100%
+			>ä½ çš„æµè§ˆå™¨ä¸æ”¯æŒiframe</iframe>
+		</div>
+		
+		<div style="clear:both"></div>
+		<hr/>
+		
+		<!-- åå°æŒç»­è·å–ä¿¡æ¯ -->
+		<iframe
+			id="getmessage"
+			src="./getmessage.php"
+			style="display:none;"
+		></iframe>
+		
+		<!-- js ä»£ç  -->
+		<script>
+		
+			// è®¾ç½®å®šæ—¶å™¨ï¼Œä¸æ–­åˆ·æ–°æ¶ˆæ¯
+			var int = set();
 			function set()
 			{
-				return setInterval("document.getElementById('message').contentWindow.location.reload(true)",1000);
+				return setInterval("document.getElementById('getmessage').contentWindow.location.reload(true)",1000);
 			}
+			
 		</script>
 		
 	</body>

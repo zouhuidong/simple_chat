@@ -1,49 +1,39 @@
 <?php
 	/*
-	 *	Êı¾İ¿âÁ¬½Ó
+	 *	æ•°æ®åº“è¿æ¥
 	 */
 
-	$g_dbSevername;			// ·şÎñÆ÷Ãû³Æ
-	$g_dbUsername;			// ·şÎñÆ÷ÓÃ»§Ãû
-	$g_dbPassword;			// ·şÎñÆ÷ÃÜÂë
-	$g_dbDatabase;			// Êı¾İ¿âÃû³Æ
-	$g_dbCharset;			// Êı¾İ¿â×Ö·û¼¯
-	$g_dbServerTimeZone;	// Êı¾İ¿âÊ±Çø
-	$g_dbConnect;			// Á¬½Óµ½Êı¾İ¿âµÄ·µ»ØÖµ
-	$g_fpUpdateHistory;		// ¸üĞÂÈÕÖ¾µÄÎÄ¼şÂ·¾¶
+	$g_dbSevername;			// æœåŠ¡å™¨åç§°
+	$g_dbUsername;			// æœåŠ¡å™¨ç”¨æˆ·å
+	$g_dbPassword;			// æœåŠ¡å™¨å¯†ç 
+	$g_dbDatabase;			// æ•°æ®åº“åç§°
+	$g_dbServerTimeZone;	// æ•°æ®åº“æ—¶åŒº
+	$g_dbConnect;			// è¿æ¥åˆ°æ•°æ®åº“çš„è¿”å›å€¼
+	$g_fpUpdateHistory;		// æ›´æ–°æ—¥å¿—çš„æ–‡ä»¶è·¯å¾„
 	
 	$g_dbSevername = "localhost";
 	$g_dbUsername = "root";	
 	$g_dbPassword = "";
 	$g_dbDatabase = "simple_chat";
-	$g_dbCharset = "GBK";
 	$g_dbServerTimeZone = "PRC";
 
-	// ÉèÖÃÄ¬ÈÏÊ±Çø
+	// è®¾ç½®é»˜è®¤æ—¶åŒº
 	date_default_timezone_set($g_dbServerTimeZone);
 	
-	// ´´½¨ºÍ·şÎñÆ÷µÄÁ¬½Ó
+	// åˆ›å»ºå’ŒæœåŠ¡å™¨çš„è¿æ¥
 	$g_dbConnect = mysqli_connect($g_dbSevername, $g_dbUsername, $g_dbPassword);
 
-	// ¼ì²âÁ¬½Ó
+	// æ£€æµ‹è¿æ¥
 	if (!$g_dbConnect) {
-		echo "·şÎñÆ÷Á¬½ÓÊ§°Ü: ".mysqli_connect_error();
+		echo "æœåŠ¡å™¨è¿æ¥å¤±è´¥: ".mysqli_connect_error();
 		//return;
 	}
 	else
 	{
-		// Á¬½ÓÊı¾İ¿â
+		// è¿æ¥æ•°æ®åº“
 		if (!mysqli_select_db($g_dbConnect,$g_dbDatabase))
 		{
-			echo '<br/>²»ÄÜÑ¡Ôñµ½Êı¾İ¿â£º '.$g_dbDatabase.'<br>';
-			//return;
-		}
-
-		// ÉèÖÃ×Ö·û¼¯
-		$sql = "SET NAMES ".$g_dbCharset;
-		if(!mysqli_query($g_dbConnect,$sql))
-		{
-			echo "<br/>Á¬½ÓÊı¾İ¿âÊ±ÉèÖÃ×Ö·û¼¯Ê§°Ü: ".mysqli_error($g_dbConnect).'<br>';
+			echo '<br/>ä¸èƒ½é€‰æ‹©åˆ°æ•°æ®åº“ï¼š '.$g_dbDatabase.'<br>';
 			//return;
 		}
 	}
