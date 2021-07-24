@@ -6,7 +6,7 @@
 	 *
 	 *	制作者：huidong<mailkey@yeah.net>
 	 *	创建时间：2021.7.19
-	 *	最后修改：2021.7.23
+	 *	最后修改：2021.7.24
 	 *
 	 */
 
@@ -14,7 +14,7 @@
 
 	// simple_chat 版本信息
 	$g_version = "Ver 0.2(beta)";
-	$g_release_time = "2021.7.23";
+	$g_release_time = "2021.7.24";
 	
 	// 规定是否允许输入 html 标签（script标签除外）
 	$_SESSION['isAllowHTML'] = false;
